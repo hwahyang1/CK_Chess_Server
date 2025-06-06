@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using System.Data;
 using System.Text;
 using System.Text.Json;
 using System.Net.Sockets;
@@ -72,7 +71,7 @@ namespace Chess_Server
 			byte[] buffer = new byte[Config.BUFFER_SIZE];
 			int byteCount;
 
-			string uid = GenerateUid();
+			string uid = GenerateUid("c_");
 			clientStreams.TryAdd(uid, client);
 
 			try
@@ -139,7 +138,7 @@ namespace Chess_Server
 			{
 				if (!clientStreams.ContainsKey(uid)) return;
 				client = clientStreams[uid];
-				if (!IsClientConnected(client)) return;
+				if (!IsClientConnected(client)) clientStreams.TryRemove(uid, out TcpClient _);
 				stream = client.GetStream();
 				
 				byte[] responseBytes = Encoding.UTF8.GetBytes(data);
@@ -150,20 +149,13 @@ namespace Chess_Server
 			{
 				Console.WriteLine("[{0}] Client Error: {1}", client?.Client.RemoteEndPoint?.ToString() ?? uid, e.Message);
 			}
-			finally
-			{
-				Console.WriteLine("[{0}] Client connection lost.", client?.Client.RemoteEndPoint?.ToString() ?? uid);
-				
-				stream?.Close();
-				client?.Close();
-			}
 		}
 		
-		private static string GenerateUid()
+		private static string GenerateUid(string prefix = "")
 		{
 			lock (uidLock)
 			{
-				return "u_" + Interlocked.Increment(ref uidCounter).ToString("D8");
+				return prefix + Interlocked.Increment(ref uidCounter).ToString("D8");
 			}
 		}
 		
