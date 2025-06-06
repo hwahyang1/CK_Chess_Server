@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Net;
+using System.Data;
 using System.Text;
 using System.Text.Json;
 using System.Net.Sockets;
 using System.Collections.Concurrent;
 
 using Chess_Server.Modules;
+using Chess_Server.Templates.Request;
+using Chess_Server.Templates.Response;
 
 namespace Chess_Server
 {
@@ -79,7 +82,7 @@ namespace Chess_Server
 					string data = Encoding.UTF8.GetString(buffer, 0, byteCount);
 					Console.WriteLine("[{0}] Received: {1}", client.Client.RemoteEndPoint, data);
 
-					string response = "DATA";
+					string response = HandleMessage(client, data);
 					byte[] responseBytes = Encoding.UTF8.GetBytes(response);
 					stream.Write(responseBytes, 0, responseBytes.Length);
 					Console.WriteLine("[{0}] Sent: {1}", client.Client.RemoteEndPoint, response);
@@ -98,6 +101,29 @@ namespace Chess_Server
 
 				clientStreams.TryRemove(uid, out TcpClient _);
 			}
+		}
+		
+		private static string HandleMessage(TcpClient client, string rawMessage)
+		{
+			string response;
+			
+			try
+			{
+				BaseRequest commandMessage = JsonSerializer.Deserialize<BaseRequest>(rawMessage, serializerOptions);
+				switch (commandMessage?.command.ToLower() ?? "-")
+				{
+					default:
+						response = JsonSerializer.Serialize<ErrorResponse>(new ErrorResponse(404, "Not Found"));
+						break;
+				}
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("[{0}] {1}", client.Client.RemoteEndPoint, e.Message);
+				response = JsonSerializer.Serialize<ErrorResponse>(new ErrorResponse(500, "Internal Server Error"));
+			}
+			
+			return response;
 		}
 
 		/// <summary>
