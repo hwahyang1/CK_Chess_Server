@@ -125,6 +125,8 @@ namespace Chess_Server
 			return response;
 		}
 
+		#region Utils
+
 		/// <summary>
 		/// 특정 클라이언트에 데이터를 전송합니다.
 		/// </summary>
@@ -174,5 +176,7 @@ namespace Chess_Server
 				return false;
 			}
 		}
+
+		#endregion
 	}
 }

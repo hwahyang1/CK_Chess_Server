@@ -7,6 +7,7 @@ namespace Chess_Server.Modules
     public static class ChessManager
     {
         #region Utils
+        
         private static bool InBoard(int row, int column) => row >= 0 && row < 8 && column >= 0 && column < 8;
 
         private static bool IsEnemy(Block[][] board, int row1, int column1, int row2, int column2) => board[row2][column2].Team != DefineTeam.None && board[row1][column1].Team != board[row2][column2].Team;
@@ -25,6 +26,7 @@ namespace Chess_Server.Modules
         #endregion
 
         #region Moves
+        
         private static List<(int row, int column)> GetAvailableMoves(Block[][] board, int row, int column)
         {
             List<(int, int)> result = new List<(int, int)>();
@@ -132,9 +134,11 @@ namespace Chess_Server.Modules
                     result.Add((newRow, newColumn));
                 }
         }
+        
         #endregion
 
         #region Move Validations
+        
         public static List<(int row, int column)> GetPossibleMoves(Block[][] board, int fromRow, int fromColumn)
         {
             List<(int row, int column)> pseudoMoves = GetAvailableMoves(board, fromRow, fromColumn);
@@ -166,9 +170,11 @@ namespace Chess_Server.Modules
             newBoard[fromRow][fromColumn] = new Block();
             return newBoard;
         }
+        
         #endregion
 
         #region Promotion
+        
         public static bool HandlePromotion(Block[][] board, int row, int column)
         {
             Block block = board[row][column];
@@ -180,9 +186,11 @@ namespace Chess_Server.Modules
             }
             return false;
         }
+        
         #endregion
 
         #region Check / Checkmate
+        
         public static bool IsInCheck(DefineTeam team, Block[][] board)
         {
             int kingRow = -1, kingColumn = -1;
@@ -254,6 +262,7 @@ namespace Chess_Server.Modules
             winner = DefineTeam.None;
             return false;
         }
+        
         #endregion
     }
 }
