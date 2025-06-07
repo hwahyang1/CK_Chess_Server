@@ -6,7 +6,7 @@ namespace Chess_Server.Modules
 {
 	public class RedisManager : Singleton<RedisManager>
 	{
-		private static ConnectionMultiplexer? redis = null;
+		private ConnectionMultiplexer? redis = null;
 
 		RedisManager()
 		{

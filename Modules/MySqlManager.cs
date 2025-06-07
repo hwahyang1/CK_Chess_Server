@@ -7,7 +7,7 @@ namespace Chess_Server.Modules
 {
 	public class MySqlManager : Singleton<MySqlManager>
 	{
-		private static MySqlConnection? connection = null;
+		private MySqlConnection? connection = null;
 
 		MySqlManager()
 		{
