@@ -22,9 +22,6 @@ namespace Chess_Server
 		private static TcpListener? listener;
 		private static readonly ConcurrentDictionary<string, TcpClient> clientStreams = new ConcurrentDictionary<string, TcpClient>();
 		
-		private static readonly object uidLock = new object();
-		private static int uidCounter = 0;
-		
 		public static void Main(string[] args)
 		{
 			try
@@ -155,10 +152,7 @@ namespace Chess_Server
 		
 		private static string GenerateUid(string prefix = "")
 		{
-			lock (uidLock)
-			{
-				return prefix + Interlocked.Increment(ref uidCounter).ToString("D8");
-			}
+			return prefix + Guid.NewGuid();
 		}
 		
 		private static bool IsClientConnected(TcpClient client)
