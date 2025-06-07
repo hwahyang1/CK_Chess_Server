@@ -13,19 +13,19 @@ namespace Chess_Server
 {
 	public class Program
 	{
-		private static JsonSerializerOptions serializerOptions = new JsonSerializerOptions
-		                                                         {
-			                                                         IncludeFields = true,
-			                                                         PropertyNameCaseInsensitive = true
-		                                                         };
+		private static readonly JsonSerializerOptions? SERIALIZER_OPTIONS = new JsonSerializerOptions
+		                                                                    {
+			                                                                    IncludeFields = true,
+			                                                                    PropertyNameCaseInsensitive = true
+		                                                                    };
 		
-		private static TcpListener listener;
-		private static ConcurrentDictionary<string, TcpClient> clientStreams = new ConcurrentDictionary<string, TcpClient>();
+		private static TcpListener? listener;
+		private static readonly ConcurrentDictionary<string, TcpClient> clientStreams = new ConcurrentDictionary<string, TcpClient>();
 		
 		private static readonly object uidLock = new object();
 		private static int uidCounter = 0;
 		
-		static void Main(string[] args)
+		public static void Main(string[] args)
 		{
 			try
 			{
@@ -56,7 +56,7 @@ namespace Chess_Server
 			}
 			finally
 			{
-				listener.Stop();
+				listener?.Stop();
 				MySqlManager.Instance.Disconnect();
 				RedisManager.Instance.Dispose();
 				Console.WriteLine("[Server] Server stopped.");
@@ -108,7 +108,7 @@ namespace Chess_Server
 			
 			try
 			{
-				BaseRequest commandMessage = JsonSerializer.Deserialize<BaseRequest>(rawMessage, serializerOptions);
+				BaseRequest? commandMessage = JsonSerializer.Deserialize<BaseRequest>(rawMessage, SERIALIZER_OPTIONS);
 				switch (commandMessage?.command.ToLower() ?? "-")
 				{
 					default:
