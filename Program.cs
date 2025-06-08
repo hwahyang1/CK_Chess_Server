@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Collections.Concurrent;
 
 using Chess_Server.Modules;
+using Chess_Server.Modules.Handlers;
 using Chess_Server.Templates.Request;
 using Chess_Server.Templates.Response;
 
@@ -121,6 +122,10 @@ namespace Chess_Server
 				{
 					switch (commandMessage?.command.ToLower() ?? "-")
 					{
+						case "RoomLists":
+							RoomListsRequest roomListsRequest = JsonSerializer.Deserialize<RoomListsRequest>(rawMessage, SERIALIZER_OPTIONS);
+							response = JsonSerializer.Serialize<RoomListsResponse>(RoomHandler.GetRoomLists(roomListsRequest));
+							break;
 						default:
 							response = JsonSerializer.Serialize<ErrorResponse>(new ErrorResponse(clientUid, 404, "Not Found"));
 							break;

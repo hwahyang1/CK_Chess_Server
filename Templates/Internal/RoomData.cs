@@ -1,31 +1,33 @@
 using System;
+using System.Text.Json.Serialization;
 
 namespace Chess_Server.Templates.Internal
 {
+	[Serializable]
 	public class RoomData
 	{
-		private readonly string id;
-		public string Id => id;
+		[JsonInclude]
+		public string Id;
 		
-		private readonly string displayName;
-		public string DisplayName => displayName;
+		[JsonInclude]
+		public string DisplayName;
 		
-		private readonly string ownerId;
-		public string OwnerId => ownerId;
+		[JsonInclude]
+		public string OwnerId;
 		
-		private readonly string[] participants;
-		public string[] Participants => participants;
+		[JsonInclude]
+		public string[] Participants;
 		
-		private readonly bool isStarted;
-		public bool IsStarted => isStarted;
+		[JsonInclude]
+		public bool IsStarted;
 
 		public RoomData(string id, string displayName, string ownerId, string[] participants, bool isStarted)
 		{
-			this.id = id;
-			this.displayName = displayName;
-			this.ownerId = ownerId;
-			this.participants = participants;
-			this.isStarted = isStarted;
+			Id = id;
+			DisplayName = displayName;
+			OwnerId = ownerId;
+			Participants = participants;
+			IsStarted = isStarted;
 		}
 	}
 }
