@@ -17,11 +17,20 @@ namespace Chess_Server.Modules.Handlers
 			return response;
 		}
 
-		public static (RoomInfoResponse response, RoomData[]? previousRoom) RoomCreate(RoomCreateRequest request, string command = "")
+		public static (RoomInfoResponse response, RoomData[] previousRoom) RoomCreate(RoomCreateRequest request, string command = "")
 		{
 			if (command == "") command = request.command;
-			(string roomId, RoomData[]? previousRoom) = RoomManager.CreateRoom(request.clientUid, request.roomName);
+			(string roomId, RoomData[] previousRoom) = RoomManager.CreateRoom(request.clientUid, request.roomName);
 			RoomData room = RoomManager.GetRoomByRoomId(roomId);
+			RoomInfoResponse response = new RoomInfoResponse(request.clientUid, command, 200, "OK", room, DefineTeam.None);
+			return (response, previousRoom);
+		}
+		
+		public static (RoomInfoResponse response, RoomData[] previousRoom) RoomJoin(RoomJoinRequest request, string command = "")
+		{
+			if (command == "") command = request.command;
+			RoomData[] previousRoom = RoomManager.JoinRoom(request.roomId, request.clientUid); // TODO: clientUid to userUid
+			RoomData room = RoomManager.GetRoomByRoomId(request.roomId);
 			RoomInfoResponse response = new RoomInfoResponse(request.clientUid, command, 200, "OK", room, DefineTeam.None);
 			return (response, previousRoom);
 		}

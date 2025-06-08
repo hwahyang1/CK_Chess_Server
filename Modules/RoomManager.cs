@@ -21,7 +21,7 @@ namespace Chess_Server.Modules
 		/// <param name="roomOwner">방 소유자의 Uid를 지정합니다.</param>
 		/// <returns>생성된 방의 Uid가 반환됩니다. 기존에 roomOwner가 소유중인 방이 있을 경우, 해당 방의 데이터 또한 반환합니다</returns>
 		/// <remarks>기존에 roomOwner가 참여/소유중인 방이 있다면, 기존 방에서 탈퇴하거나 방을 제거합니다.</remarks>
-		public static (string roomId, RoomData[]? previousRoom) CreateRoom(string roomName, string roomOwner)
+		public static (string roomId, RoomData[] previousRoom) CreateRoom(string roomName, string roomOwner)
 		{
 			DataTable existData = MySqlManager.Instance.QueryDataTable("SELECT `id`, `owner`, `participants` FROM `chess_rooms` WHERE `owner` = @OWNERID OR JSON_CONTAINS(participants, JSON_QUOTE(@OWNERID));",
 									                                     new Dictionary<string, object>()
@@ -112,13 +112,31 @@ namespace Chess_Server.Modules
 		/// <param name="roomId">방의 Uid를 지정합니다.</param>
 		/// <param name="playerId">방 참여자의 Uid를 지정합니다.</param>
 		/// <remarks>기존에 player가 참여/소유중인 방이 있다면, 기존 방에서 탈퇴하거나 방을 제거합니다.</remarks>
-		public static void JoinRoom(string roomId, string playerId)
+		public static RoomData[] JoinRoom(string roomId, string playerId)
 		{
-			RoomData room = GetRoomByRoomId(roomId);
-			if (room == null) return;
+			DataTable existData = MySqlManager.Instance.QueryDataTable("SELECT `id`, `owner`, `participants` FROM `chess_rooms` WHERE `owner` = @OWNERID OR JSON_CONTAINS(participants, JSON_QUOTE(@OWNERID));",
+			                                                           new Dictionary<string, object>()
+			                                                           {
+				                                                           { "@OWNERID", playerId }
+			                                                           });
+
+			List<RoomData> previousRooms = new List<RoomData>();
 			
-			List<string> participants = new List<string>(room.Participants);
-			if (participants.Contains(playerId)) return;
+			if (existData.Rows.Count > 0)
+			{
+				foreach (DataRow row in existData.Rows)
+				{
+					RoomData room = LeaveRoom(row["id"].ToString(), playerId);
+					if (room == null) continue;
+					previousRooms.Add(room);
+				}
+			}
+			
+			RoomData targetRoom = GetRoomByRoomId(roomId);
+			if (targetRoom == null) return [];
+			
+			List<string> participants = new List<string>(targetRoom.Participants);
+			if (participants.Contains(playerId)) return [];
 
 			participants.Add(playerId);
 			string participantsString = JsonSerializer.Serialize(participants.ToArray());
@@ -129,6 +147,8 @@ namespace Chess_Server.Modules
 				                            { "@DATA", participantsString },
 				                            { "@ROOMID", roomId }
 			                            });
+			
+			return previousRooms.ToArray();
 		}
 
 		/// <summary>

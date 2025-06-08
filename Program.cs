@@ -131,9 +131,15 @@ namespace Chess_Server
 							break;
 						case "RoomCreate":
 							RoomCreateRequest roomCreateRequest = JsonSerializer.Deserialize<RoomCreateRequest>(rawMessage, SERIALIZER_OPTIONS);
-							(RoomInfoResponse data, RoomData[]? previousRoom) = RoomHandler.RoomCreate(roomCreateRequest, "RoomJoined");
+							(RoomInfoResponse roomCreateResponse, RoomData[] roomCreateUserPreviousRoom) = RoomHandler.RoomCreate(roomCreateRequest, "RoomJoined");
 							// TODO: Broadcast to previous Room
-							response = JsonSerializer.Serialize<RoomInfoResponse>(data);
+							response = JsonSerializer.Serialize<RoomInfoResponse>(roomCreateResponse);
+							break;
+						case "RoomJoin":
+							RoomJoinRequest roomJoinRequest = JsonSerializer.Deserialize<RoomJoinRequest>(rawMessage, SERIALIZER_OPTIONS);
+							(RoomInfoResponse roomJoinResponse, RoomData[] roomJoinUserPreviousRoom) = RoomHandler.RoomJoin(roomJoinRequest, "RoomJoined");
+							// TODO: Broadcast to previous Room
+							response = JsonSerializer.Serialize<RoomInfoResponse>(roomJoinResponse);
 							break;
 						default:
 							response = JsonSerializer.Serialize<ErrorResponse>(new ErrorResponse(clientUid, 404, "Not Found"));
