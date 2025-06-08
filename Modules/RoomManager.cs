@@ -189,6 +189,11 @@ namespace Chess_Server.Modules
 			return room;
 		}
 
+		public static void DeleteAllRooms()
+		{
+			MySqlManager.Instance.Query("DELETE FROM `chess_rooms`");
+		}
+
 		#region Utils
 
 		private static RoomData ConvertDataRowToRoomData(DataRow row)

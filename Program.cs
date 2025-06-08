@@ -29,6 +29,7 @@ namespace Chess_Server
 			try
 			{
 				MySqlManager.Instance.Connect();
+				RoomManager.DeleteAllRooms();
 				Console.WriteLine("[Server] Server connected to MySQL.");
 				
 				RedisManager.Instance.Connect();
