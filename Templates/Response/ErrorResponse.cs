@@ -8,7 +8,7 @@ namespace Chess_Server.Templates.Response
 	{
 		//
 
-		public ErrorResponse(int statusCode, string reason) : base("ERROR", statusCode, reason)
+		public ErrorResponse(string clientUid, int statusCode, string reason) : base(clientUid, "ERROR", statusCode, reason)
 		{
 			//
 		}

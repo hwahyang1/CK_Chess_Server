@@ -68,8 +68,15 @@ namespace Chess_Server
 			byte[] buffer = new byte[Config.BUFFER_SIZE];
 			int byteCount;
 
-			string uid = GenerateUid("c_");
-			clientStreams.TryAdd(uid, client);
+			string clientUid = GenerateUid("c_");
+			clientStreams.TryAdd(clientUid, client);
+			Console.WriteLine("[{0}] Client is assigned uid {1}.", client.Client.RemoteEndPoint, clientUid);
+			
+			BaseResponse uidResponse = new BaseResponse(clientUid, "ClientUid", 200, "OK");
+			string uidResponseString = JsonSerializer.Serialize<BaseResponse>(uidResponse);
+			byte[] uidResponseBytes = Encoding.UTF8.GetBytes(uidResponseString);
+			stream.Write(uidResponseBytes, 0, uidResponseBytes.Length);
+			Console.WriteLine("[{0}] Sent: {1}", client.Client.RemoteEndPoint, uidResponseString);
 
 			try
 			{
@@ -78,7 +85,7 @@ namespace Chess_Server
 					string data = Encoding.UTF8.GetString(buffer, 0, byteCount);
 					Console.WriteLine("[{0}] Received: {1}", client.Client.RemoteEndPoint, data);
 
-					string response = HandleMessage(client, data);
+					string response = HandleMessage(client, data, clientUid);
 					byte[] responseBytes = Encoding.UTF8.GetBytes(response);
 					stream.Write(responseBytes, 0, responseBytes.Length);
 					Console.WriteLine("[{0}] Sent: {1}", client.Client.RemoteEndPoint, response);
@@ -95,28 +102,35 @@ namespace Chess_Server
 				stream.Close();
 				client.Close();
 
-				clientStreams.TryRemove(uid, out TcpClient _);
+				clientStreams.TryRemove(clientUid, out TcpClient _);
 			}
 		}
 		
-		private static string HandleMessage(TcpClient client, string rawMessage)
+		private static string HandleMessage(TcpClient client, string rawMessage, string clientUid)
 		{
 			string response;
 			
 			try
 			{
 				BaseRequest? commandMessage = JsonSerializer.Deserialize<BaseRequest>(rawMessage, SERIALIZER_OPTIONS);
-				switch (commandMessage?.command.ToLower() ?? "-")
+				if (commandMessage?.clientUid != clientUid)
 				{
-					default:
-						response = JsonSerializer.Serialize<ErrorResponse>(new ErrorResponse(404, "Not Found"));
-						break;
+					response = JsonSerializer.Serialize<ErrorResponse>(new ErrorResponse(clientUid, 404, "Not Found"));
+				}
+				else
+				{
+					switch (commandMessage?.command.ToLower() ?? "-")
+					{
+						default:
+							response = JsonSerializer.Serialize<ErrorResponse>(new ErrorResponse(clientUid, 404, "Not Found"));
+							break;
+					}
 				}
 			}
 			catch (Exception e)
 			{
 				Console.WriteLine("[{0}] {1}", client.Client.RemoteEndPoint, e.Message);
-				response = JsonSerializer.Serialize<ErrorResponse>(new ErrorResponse(500, "Internal Server Error"));
+				response = JsonSerializer.Serialize<ErrorResponse>(new ErrorResponse(clientUid, 500, "Internal Server Error"));
 			}
 			
 			return response;

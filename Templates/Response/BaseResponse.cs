@@ -7,15 +7,21 @@ namespace Chess_Server.Templates.Response
 	public class BaseResponse
 	{
 		[JsonInclude]
+		public string clientUid;
+		
+		[JsonInclude]
 		public string command;
+		
 		[JsonInclude]
 		public int statusCode;
+		
 		[JsonInclude]
 		public string reason;
 
 		[JsonConstructor]
-		public BaseResponse(string command, int statusCode, string reason)
+		public BaseResponse(string clientUid, string command, int statusCode, string reason)
 		{
+			this.clientUid = clientUid;
 			this.command = command;
 			this.statusCode = statusCode;
 			this.reason = reason;
