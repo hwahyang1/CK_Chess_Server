@@ -9,6 +9,7 @@ using Chess_Server.Modules;
 using Chess_Server.Modules.Handlers;
 using Chess_Server.Templates.Request;
 using Chess_Server.Templates.Response;
+using Chess_Server.Templates.Internal;
 
 namespace Chess_Server
 {
@@ -100,6 +101,8 @@ namespace Chess_Server
 			{
 				Console.WriteLine("[{0}] Client connection lost.", client.Client.RemoteEndPoint);
 				
+				// TODO: Leave Room
+				
 				stream.Close();
 				client.Close();
 
@@ -125,6 +128,12 @@ namespace Chess_Server
 						case "RoomLists":
 							RoomListsRequest roomListsRequest = JsonSerializer.Deserialize<RoomListsRequest>(rawMessage, SERIALIZER_OPTIONS);
 							response = JsonSerializer.Serialize<RoomListsResponse>(RoomHandler.GetRoomLists(roomListsRequest));
+							break;
+						case "RoomCreate":
+							RoomCreateRequest roomCreateRequest = JsonSerializer.Deserialize<RoomCreateRequest>(rawMessage, SERIALIZER_OPTIONS);
+							(RoomInfoResponse data, RoomData[]? previousRoom) = RoomHandler.RoomCreate(roomCreateRequest, "RoomJoined");
+							// TODO: Broadcast to previous Room
+							response = JsonSerializer.Serialize<RoomInfoResponse>(data);
 							break;
 						default:
 							response = JsonSerializer.Serialize<ErrorResponse>(new ErrorResponse(clientUid, 404, "Not Found"));
