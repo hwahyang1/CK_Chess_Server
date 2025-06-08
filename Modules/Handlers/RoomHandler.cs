@@ -34,5 +34,13 @@ namespace Chess_Server.Modules.Handlers
 			RoomInfoResponse response = new RoomInfoResponse(request.clientUid, command, 200, "OK", room, DefineTeam.None);
 			return (response, previousRoom);
 		}
+
+		public static RoomLeaveOrDeleteResponse LeaveOrDeleteRoom(RoomLeaveOrDeleteRequest request, string command = "")
+		{
+			if (command == "") command = request.command;
+			RoomData? room = RoomManager.LeaveRoom(request.roomId, request.clientUid); // TODO: clientUid to userUid
+			RoomLeaveOrDeleteResponse roomLeaveOrDeleteResponse = new RoomLeaveOrDeleteResponse(request.clientUid, command, 200, "OK", room);
+			return roomLeaveOrDeleteResponse;
+		}
 	}
 }

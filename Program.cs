@@ -141,6 +141,11 @@ namespace Chess_Server
 							// TODO: Broadcast to previous Room
 							response = JsonSerializer.Serialize<RoomInfoResponse>(roomJoinResponse);
 							break;
+						case "RoomLeaveOrDelete":
+							RoomLeaveOrDeleteRequest roomLeaveOrDeleteRequest = JsonSerializer.Deserialize<RoomLeaveOrDeleteRequest>(rawMessage, SERIALIZER_OPTIONS);
+							response = JsonSerializer.Serialize<RoomLeaveOrDeleteResponse>(RoomHandler.LeaveOrDeleteRoom(roomLeaveOrDeleteRequest, "RoomLeave"));
+							// TODO: Broadcast to Room
+							break;
 						default:
 							response = JsonSerializer.Serialize<ErrorResponse>(new ErrorResponse(clientUid, 404, "Not Found"));
 							break;

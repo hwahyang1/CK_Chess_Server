@@ -156,7 +156,7 @@ namespace Chess_Server.Modules
 		/// </summary>
 		/// <param name="roomId">방의 Uid를 지정합니다.</param>
 		/// <param name="playerId">방 참여자의 Uid를 지정합니다.</param>
-		/// <remarks>플레이어가 방의 소유자일 경우, 해당 방의 데이터를 반환합니다.</remarks>
+		/// <remarks>해당 방의 데이터를 반환합니다.</remarks>
 		/// <remarks>player가 방의 소유자라면 방을 제거합니다.</remarks>
 		public static RoomData? LeaveRoom(string roomId, string playerId)
 		{
@@ -173,8 +173,6 @@ namespace Chess_Server.Modules
 				                            {
 					                            { "@ROOMID", roomId }
 				                            });
-
-				return room;
 			}
 			else
 			{
@@ -187,9 +185,8 @@ namespace Chess_Server.Modules
 					                            { "@DATA", participantsString },
 					                            { "@ROOMID", roomId }
 				                            });
-
-				return null;
 			}
+			return room;
 		}
 
 		#region Utils
