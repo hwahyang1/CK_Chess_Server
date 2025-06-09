@@ -1,8 +1,6 @@
 using System;
 using System.Text.Json.Serialization;
 
-using Chess_Server.Templates.Internal;
-
 namespace Chess_Server.Templates.Response
 {
 	[Serializable]
