@@ -9,11 +9,11 @@ namespace Chess_Server.Templates.Response
 	public class RoomListsResponse : BaseResponse
 	{
 		[JsonInclude]
-		public RoomData[] Rooms;
+		public RoomData[] rooms;
 
 		public RoomListsResponse(string clientUid, string command, int statusCode, string reason, RoomData[] rooms) : base(clientUid, command, statusCode, reason)
 		{
-			Rooms = rooms;
+			this.rooms = rooms;
 		}
 	}
 }

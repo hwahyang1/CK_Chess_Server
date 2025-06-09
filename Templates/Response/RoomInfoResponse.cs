@@ -9,15 +9,15 @@ namespace Chess_Server.Templates.Response
 	public class RoomInfoResponse : BaseResponse
 	{
 		[JsonInclude]
-		public RoomData Room;
+		public RoomData room;
 
 		[JsonInclude]
-		public DefineTeam YourTeam;
+		public DefineTeam yourTeam;
 
 		public RoomInfoResponse(string clientUid, string command, int statusCode, string reason, RoomData room, DefineTeam yourTeam) : base(clientUid, command, statusCode, reason)
 		{
-			Room = room;
-			YourTeam = yourTeam;
+			this.room = room;
+			this.yourTeam = yourTeam;
 		}
 	}
 }

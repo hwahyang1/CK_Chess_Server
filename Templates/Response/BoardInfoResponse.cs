@@ -9,11 +9,11 @@ namespace Chess_Server.Templates.Response
 	public class BoardInfoResponse : BaseResponse
 	{
 		[JsonInclude]
-		public Block[] Board;
+		public Block[] board;
 
 		public BoardInfoResponse(string clientUid, string command, int statusCode, string reason, Block[] board) : base(clientUid, command, statusCode, reason)
 		{
-			Board = board;
+			this.board = board;
 		}
 	}
 }
