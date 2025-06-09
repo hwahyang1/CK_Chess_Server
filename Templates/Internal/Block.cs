@@ -1,14 +1,16 @@
 using System;
+using System.Text.Json.Serialization;
 
-namespace Chess_Server.Templates
+namespace Chess_Server.Templates.Internal
 {
+	[Serializable]
 	public struct Block
 	{
-		private DefinePieces piece;
-		public DefinePieces Piece => piece;
+		[JsonInclude]
+		public DefinePieces piece;
 		
-		private DefineTeam team;
-		public DefineTeam Team => team;
+		[JsonInclude]
+		public DefineTeam team;
 
 		public Block(DefinePieces piece = DefinePieces.None, DefineTeam team = DefineTeam.None)
 		{
@@ -16,6 +18,7 @@ namespace Chess_Server.Templates
 			this.team = team;
 		}
 		
+		[JsonIgnore]
 		public bool IsEmpty => piece == DefinePieces.None;
 	}
 }

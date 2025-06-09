@@ -104,7 +104,7 @@ namespace Chess_Server
 				
 				// TODO: clientUid to userUid
 				RoomData? room = RoomManager.GetRoomByPlayerId(clientUid);
-				if (room != null) RoomManager.LeaveRoom(room.Id, clientUid);
+				if (room != null) RoomManager.LeaveRoom(room.id, clientUid);
 				
 				stream.Close();
 				client.Close();

@@ -135,7 +135,7 @@ namespace Chess_Server.Modules
 			RoomData targetRoom = GetRoomByRoomId(roomId);
 			if (targetRoom == null) return [];
 			
-			List<string> participants = new List<string>(targetRoom.Participants);
+			List<string> participants = new List<string>(targetRoom.participants);
 			if (participants.Contains(playerId)) return [];
 
 			participants.Add(playerId);
@@ -163,10 +163,10 @@ namespace Chess_Server.Modules
 			RoomData room = GetRoomByRoomId(roomId);
 			if (room == null) return null;
 
-			List<string> participants = new List<string>(room.Participants);
+			List<string> participants = new List<string>(room.participants);
 			if (!participants.Contains(playerId)) return null;
 			
-			if (room.OwnerId == playerId)
+			if (room.ownerId == playerId)
 			{
 				MySqlManager.Instance.Query("DELETE FROM `chess_rooms` WHERE `id` = @ROOMID",
 				                            new Dictionary<string, object>()

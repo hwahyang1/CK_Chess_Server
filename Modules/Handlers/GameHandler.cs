@@ -1,7 +1,6 @@
 using System;
 using System.Text.Json;
 
-using Chess_Server.Templates;
 using Chess_Server.Templates.Request;
 using Chess_Server.Templates.Response;
 using Chess_Server.Templates.Internal;

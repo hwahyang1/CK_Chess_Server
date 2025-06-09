@@ -1,6 +1,6 @@
 using System;
 
-using Chess_Server.Templates;
+using Chess_Server.Templates.Internal;
 
 namespace Chess_Server.Modules
 {
@@ -10,7 +10,7 @@ namespace Chess_Server.Modules
         
         private static bool InBoard(int row, int column) => row >= 0 && row < 8 && column >= 0 && column < 8;
 
-        private static bool IsEnemy(Block[][] board, int row1, int column1, int row2, int column2) => board[row2][column2].Team != DefineTeam.None && board[row1][column1].Team != board[row2][column2].Team;
+        private static bool IsEnemy(Block[][] board, int row1, int column1, int row2, int column2) => board[row2][column2].team != DefineTeam.None && board[row1][column1].team != board[row2][column2].team;
 
         private static Block[][] CloneBoard(Block[][] source)
         {
@@ -105,35 +105,35 @@ namespace Chess_Server.Modules
             Block block = board[row][column];
             if (block.IsEmpty) return result;
 
-            switch (block.Piece)
+            switch (block.piece)
             {
                 case DefinePieces.Pawn:
-                    AddPawnMoves(board, row, column, block.Team, result);
+                    AddPawnMoves(board, row, column, block.team, result);
                     break;
                 case DefinePieces.Rook:
-                    AddLineMoves(board, row, column, block.Team, result, new (int, int)[]
+                    AddLineMoves(board, row, column, block.team, result, new (int, int)[]
                                                                          {
                                                                              (1, 0), (-1, 0), (0, 1), (0, -1)
                                                                          });
                     break;
                 case DefinePieces.Bishop:
-                    AddLineMoves(board, row, column, block.Team, result, new (int, int)[]
+                    AddLineMoves(board, row, column, block.team, result, new (int, int)[]
                                                                          {
                                                                              (1, 1), (1, -1), (-1, 1), (-1, -1)
                                                                          });
                     break;
                 case DefinePieces.Queen:
-                    AddLineMoves(board, row, column, block.Team, result, new (int, int)[]
+                    AddLineMoves(board, row, column, block.team, result, new (int, int)[]
                                                                          {
                                                                              (1, 0), (-1, 0), (0, 1), (0, -1),
                                                                              (1, 1), (1, -1), (-1, 1), (-1, -1)
                                                                          });
                     break;
                 case DefinePieces.Knight:
-                    AddKnightMoves(board, row, column, block.Team, result);
+                    AddKnightMoves(board, row, column, block.team, result);
                     break;
                 case DefinePieces.King:
-                    AddKingMoves(board, row, column, block.Team, result);
+                    AddKingMoves(board, row, column, block.team, result);
                     break;
             }
             return result;
@@ -190,7 +190,7 @@ namespace Chess_Server.Modules
             foreach ((int deltaRow, int deltaColumn) in offsets)
             {
                 int newRow = row + deltaRow, newColumn = column + deltaColumn;
-                if (!InBoard(newRow, newColumn) || board[newRow][newColumn].Team == team) continue;
+                if (!InBoard(newRow, newColumn) || board[newRow][newColumn].team == team) continue;
                 result.Add((newRow, newColumn));
             }
         }
@@ -202,7 +202,7 @@ namespace Chess_Server.Modules
                 {
                     if (deltaRow == 0 && deltaColumn == 0) continue;
                     int newRow = row + deltaRow, newColumn = column + deltaColumn;
-                    if (!InBoard(newRow, newColumn) || board[newRow][newColumn].Team == team) continue;
+                    if (!InBoard(newRow, newColumn) || board[newRow][newColumn].team == team) continue;
                     result.Add((newRow, newColumn));
                 }
         }
@@ -232,7 +232,7 @@ namespace Chess_Server.Modules
             List<(int row, int column)> possibleMoves = GetAvailableMoves(board, fromRow, fromColumn);
             if (!possibleMoves.Contains((toRow, toColumn))) return false;
             Block[][] newBoard = SimulateMove(board, fromRow, fromColumn, toRow, toColumn);
-            return !IsInCheck(block.Team, newBoard);
+            return !IsInCheck(block.team, newBoard);
         }
 
         private static Block[][] SimulateMove(Block[][] board, int fromRow, int fromColumn, int toRow, int toColumn)
@@ -250,10 +250,10 @@ namespace Chess_Server.Modules
         public static bool HandlePromotion(Block[][] board, int row, int column)
         {
             Block block = board[row][column];
-            if (block.Piece != DefinePieces.Pawn) return false;
-            if ((block.Team == DefineTeam.White && row == 7) || (block.Team == DefineTeam.Black && row == 0))
+            if (block.piece != DefinePieces.Pawn) return false;
+            if ((block.team == DefineTeam.White && row == 7) || (block.team == DefineTeam.Black && row == 0))
             {
-                board[row][column] = new Block(DefinePieces.Queen, block.Team);
+                board[row][column] = new Block(DefinePieces.Queen, block.team);
                 return true;
             }
             return false;
@@ -270,7 +270,7 @@ namespace Chess_Server.Modules
             {
                 for (int column = 0; column < 8; column++)
                 {
-                    if (board[row][column].Piece == DefinePieces.King && board[row][column].Team == team)
+                    if (board[row][column].piece == DefinePieces.King && board[row][column].team == team)
                     {
                         kingRow = row;
                         kingColumn = column;
@@ -286,7 +286,7 @@ namespace Chess_Server.Modules
             {
                 for (int column = 0; column < 8; column++)
                 {
-                    if (board[row][column].Team == enemyTeam)
+                    if (board[row][column].team == enemyTeam)
                     {
                         if (GetAvailableMoves(board, row, column).Contains((kingRow, kingColumn)))
                         {
@@ -306,7 +306,7 @@ namespace Chess_Server.Modules
             {
                 for (int column = 0; column < 8; column++)
                 {
-                    if (board[row][column].Team == team)
+                    if (board[row][column].team == team)
                     {
                         foreach ((int newRow, int newColumn) in GetPossibleMoves(board, row, column))
                         {
