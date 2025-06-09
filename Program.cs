@@ -161,6 +161,11 @@ namespace Chess_Server
 							GamePieceAvailableMovementsRequest gamePieceAvailableMovementsRequest = JsonSerializer.Deserialize<GamePieceAvailableMovementsRequest>(rawMessage, SERIALIZER_OPTIONS);
 							response = JsonSerializer.Serialize<GamePieceAvailableMovementsResponse>(GameHandler.GetAvailableMovements(gamePieceAvailableMovementsRequest));
 							break;
+						case "GamePieceMove":
+							GamePieceMoveRequest gamePieceMoveRequest = JsonSerializer.Deserialize<GamePieceMoveRequest>(rawMessage, SERIALIZER_OPTIONS);
+							response = JsonSerializer.Serialize<GamePieceMoveResponse>(GameHandler.GamePieceMove(gamePieceMoveRequest));
+							// TODO: Broadcast to Room
+							break;
 						default:
 							response = JsonSerializer.Serialize<ErrorResponse>(new ErrorResponse(clientUid, 404, "Not Found"));
 							break;
