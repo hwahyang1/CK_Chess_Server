@@ -30,7 +30,7 @@ namespace Chess_Server.Modules.Handlers
 				board = ChessManager.InitializeBoard();
 				databaseBoard = ChessManager.BoardToArray(board);
 				
-				string serializedBoard = JsonSerializer.Serialize(databaseBoard);
+				string serializedBoard = JsonSerializer.Serialize<Block[]>(databaseBoard);
 				RedisManager.Instance.Set(key, serializedBoard);
 			}
 			else

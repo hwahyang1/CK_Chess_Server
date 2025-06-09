@@ -15,7 +15,7 @@ namespace Chess_Server
 {
 	public class Program
 	{
-		private static readonly JsonSerializerOptions? SERIALIZER_OPTIONS = new JsonSerializerOptions
+		private static readonly JsonSerializerOptions SERIALIZER_OPTIONS = new JsonSerializerOptions
 		                                                                    {
 			                                                                    IncludeFields = true,
 			                                                                    PropertyNameCaseInsensitive = true
