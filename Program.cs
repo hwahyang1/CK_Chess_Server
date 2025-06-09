@@ -154,8 +154,8 @@ namespace Chess_Server
 							response = JsonSerializer.Serialize<ErrorResponse>(new ErrorResponse(clientUid, 404, "Not Found"));
 							break;
 						case "GameBoardInfo":
-							BoardInfoRequest boardInfoRequest = JsonSerializer.Deserialize<BoardInfoRequest>(rawMessage, SERIALIZER_OPTIONS);
-							response = JsonSerializer.Serialize<BoardInfoResponse>(GameHandler.GetBoard(boardInfoRequest));
+							GameBoardInfoRequest gameBoardInfoRequest = JsonSerializer.Deserialize<GameBoardInfoRequest>(rawMessage, SERIALIZER_OPTIONS);
+							response = JsonSerializer.Serialize<GameBoardInfoResponse>(GameHandler.GetBoard(gameBoardInfoRequest));
 							break;
 						case "GamePieceAvailableMovements":
 							GamePieceAvailableMovementsRequest gamePieceAvailableMovementsRequest = JsonSerializer.Deserialize<GamePieceAvailableMovementsRequest>(rawMessage, SERIALIZER_OPTIONS);

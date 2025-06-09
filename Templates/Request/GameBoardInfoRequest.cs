@@ -4,13 +4,13 @@ using System.Text.Json.Serialization;
 namespace Chess_Server.Templates.Request
 {
 	[Serializable]
-	public class BoardInfoRequest : BaseRequest
+	public class GameBoardInfoRequest : BaseRequest
 	{
 		[JsonInclude]
 		public string roomId;
 
 		[JsonConstructor]
-		public BoardInfoRequest(string clientUid, string command, string roomId) : base(clientUid, command)
+		public GameBoardInfoRequest(string clientUid, string command, string roomId) : base(clientUid, command)
 		{
 			this.roomId = roomId;
 		}

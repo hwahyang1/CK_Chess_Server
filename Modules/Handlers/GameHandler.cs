@@ -36,15 +36,15 @@ namespace Chess_Server.Modules.Handlers
 			return board;
 		}
 		
-		public static BoardInfoResponse GetBoard(BoardInfoRequest request, string command = "")
+		public static GameBoardInfoResponse GetBoard(GameBoardInfoRequest request, string command = "")
 		{
 			if (command == "") command = request.command;
 			RoomData? room = RoomManager.GetRoomByRoomId(request.roomId);
-			if (room == null) return new BoardInfoResponse(request.clientUid, command, 404, "Not Found", []);
+			if (room == null) return new GameBoardInfoResponse(request.clientUid, command, 404, "Not Found", []);
 			
 			Block[] board = ChessManager.BoardToArray(GetBoard(request.roomId));
 
-			BoardInfoResponse response = new BoardInfoResponse(request.clientUid, command, 200, "OK", board);
+			GameBoardInfoResponse response = new GameBoardInfoResponse(request.clientUid, command, 200, "OK", board);
 			return response;
 		}
 
