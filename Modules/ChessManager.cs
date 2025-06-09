@@ -23,6 +23,78 @@ namespace Chess_Server.Modules
             return clone;
         }
 
+        public static Block[][] InitializeBoard()
+        {
+            Block[][] board = new Block[8][];
+            for (int i = 0; i < 8; i++)
+            {
+                board[i] = new Block[8];
+                for (int j = 0; j < 8; j++)
+                {
+                    board[i][j] = new Block();
+                }
+            }
+
+            // White
+            board[0][0] = new Block(DefinePieces.Rook, DefineTeam.White);
+            board[0][1] = new Block(DefinePieces.Knight, DefineTeam.White);
+            board[0][2] = new Block(DefinePieces.Bishop, DefineTeam.White);
+            board[0][3] = new Block(DefinePieces.Queen, DefineTeam.White);
+            board[0][4] = new Block(DefinePieces.King, DefineTeam.White);
+            board[0][5] = new Block(DefinePieces.Bishop, DefineTeam.White);
+            board[0][6] = new Block(DefinePieces.Knight, DefineTeam.White);
+            board[0][7] = new Block(DefinePieces.Rook, DefineTeam.White);
+            for (int i = 0; i < 8; i++)
+            {
+                board[1][i] = new Block(DefinePieces.Pawn, DefineTeam.White);
+            }
+
+            // Black
+            board[7][0] = new Block(DefinePieces.Rook, DefineTeam.Black);
+            board[7][1] = new Block(DefinePieces.Knight, DefineTeam.Black);
+            board[7][2] = new Block(DefinePieces.Bishop, DefineTeam.Black);
+            board[7][3] = new Block(DefinePieces.Queen, DefineTeam.Black);
+            board[7][4] = new Block(DefinePieces.King, DefineTeam.Black);
+            board[7][5] = new Block(DefinePieces.Bishop, DefineTeam.Black);
+            board[7][6] = new Block(DefinePieces.Knight, DefineTeam.Black);
+            board[7][7] = new Block(DefinePieces.Rook, DefineTeam.Black);
+            for (int i = 0; i < 8; i++)
+            {
+                board[6][i] = new Block(DefinePieces.Pawn, DefineTeam.Black);
+            }
+
+            return board;
+        }
+
+        public static Block[] BoardToArray(Block[][] board)
+        {
+            Block[] result = new Block[64];
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    result[row * 8 + col] = board[row][col];
+                }
+            }
+            return result;
+        }
+
+        public static Block[][] ArrayToBoard(Block[] array)
+        {
+            if (array.Length != 64) throw new ArgumentException("Array size must be 64.");
+
+            Block[][] board = new Block[8][];
+            for (int row = 0; row < 8; row++)
+            {
+                board[row] = new Block[8];
+                for (int col = 0; col < 8; col++)
+                {
+                    board[row][col] = array[row * 8 + col];
+                }
+            }
+            return board;
+        }
+
         #endregion
 
         #region Moves

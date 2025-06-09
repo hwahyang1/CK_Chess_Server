@@ -149,6 +149,14 @@ namespace Chess_Server
 							response = JsonSerializer.Serialize<RoomLeaveOrDeleteResponse>(RoomHandler.LeaveOrDeleteRoom(roomLeaveOrDeleteRequest, "RoomLeave"));
 							// TODO: Broadcast to Room
 							break;
+						case "GameReady":
+							// TODO
+							response = JsonSerializer.Serialize<ErrorResponse>(new ErrorResponse(clientUid, 404, "Not Found"));
+							break;
+						case "GameBoardInfo":
+							BoardInfoRequest boardInfoRequest = JsonSerializer.Deserialize<BoardInfoRequest>(rawMessage, SERIALIZER_OPTIONS);
+							response = JsonSerializer.Serialize<BoardInfoResponse>(GameHandler.GetBoard(boardInfoRequest));
+							break;
 						default:
 							response = JsonSerializer.Serialize<ErrorResponse>(new ErrorResponse(clientUid, 404, "Not Found"));
 							break;

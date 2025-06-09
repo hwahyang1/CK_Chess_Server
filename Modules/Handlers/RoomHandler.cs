@@ -30,6 +30,7 @@ namespace Chess_Server.Modules.Handlers
 		{
 			if (command == "") command = request.command;
 			RoomData[] previousRoom = RoomManager.JoinRoom(request.roomId, request.clientUid); // TODO: clientUid to userUid
+			// TODO: Game Start
 			RoomData room = RoomManager.GetRoomByRoomId(request.roomId);
 			RoomInfoResponse response = new RoomInfoResponse(request.clientUid, command, 200, "OK", room, DefineTeam.None);
 			return (response, previousRoom);
