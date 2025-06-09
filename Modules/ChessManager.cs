@@ -118,10 +118,16 @@ namespace Chess_Server.Modules
 
         #region Moves
 
-        public static List<(int row, int column)> GetAvailableMoves(Block[][] board, int position)
+        public static List<int> GetAvailableMoves(Block[][] board, int position)
         {
             (int row, int column) = PositionToCoordinates(position);
-            return GetAvailableMoves(board, row, column);
+            List<(int row, int column)> rawResult = GetAvailableMoves(board, row, column);
+            List<int> result = new List<int>();
+            foreach ((int row, int column) element in rawResult)
+            {
+                result.Add(CoordinatesToPosition(row,column));
+            }
+            return result;
         }
         public static List<(int row, int column)> GetAvailableMoves(Block[][] board, int row, int column)
         {
