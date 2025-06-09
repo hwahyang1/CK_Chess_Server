@@ -8,6 +8,54 @@ namespace Chess_Server.Modules
     {
         #region Utils
         
+        public static Block[] BoardToArray(Block[][] board)
+        {
+            Block[] result = new Block[64];
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    result[row * 8 + col] = board[row][col];
+                }
+            }
+            return result;
+        }
+
+        public static Block[][] ArrayToBoard(Block[] array)
+        {
+            if (array.Length != 64) throw new ArgumentException("Array size must be 64.");
+
+            Block[][] board = new Block[8][];
+            for (int row = 0; row < 8; row++)
+            {
+                board[row] = new Block[8];
+                for (int col = 0; col < 8; col++)
+                {
+                    board[row][col] = array[row * 8 + col];
+                }
+            }
+            return board;
+        }
+        
+        /// <summary>
+        /// 0~63은 a1(0, 0)~h8(7, 7)에 대응합니다.
+        /// </summary>
+        private static (int row, int column) PositionToCoordinates(int position)
+        {
+            if (!InBoard(position)) throw new ArgumentException("Position must be between 0 and 63");
+            return (position / 8, position % 8);
+        }
+
+        /// <summary>
+        /// a1(0, 0)~h8(7, 7)은 0~63에 대응합니다.
+        /// </summary>
+        private static int CoordinatesToPosition(int row, int column)
+        {
+            if (!InBoard(row, column)) throw new ArgumentException("Invalid coordinates");
+            return row * 8 + column;
+        }
+        
+        private static bool InBoard(int position) => position >= 0 && position < 64;
         private static bool InBoard(int row, int column) => row >= 0 && row < 8 && column >= 0 && column < 8;
 
         private static bool IsEnemy(Block[][] board, int row1, int column1, int row2, int column2) => board[row2][column2].team != DefineTeam.None && board[row1][column1].team != board[row2][column2].team;
@@ -66,40 +114,16 @@ namespace Chess_Server.Modules
             return board;
         }
 
-        public static Block[] BoardToArray(Block[][] board)
-        {
-            Block[] result = new Block[64];
-            for (int row = 0; row < 8; row++)
-            {
-                for (int col = 0; col < 8; col++)
-                {
-                    result[row * 8 + col] = board[row][col];
-                }
-            }
-            return result;
-        }
-
-        public static Block[][] ArrayToBoard(Block[] array)
-        {
-            if (array.Length != 64) throw new ArgumentException("Array size must be 64.");
-
-            Block[][] board = new Block[8][];
-            for (int row = 0; row < 8; row++)
-            {
-                board[row] = new Block[8];
-                for (int col = 0; col < 8; col++)
-                {
-                    board[row][col] = array[row * 8 + col];
-                }
-            }
-            return board;
-        }
-
         #endregion
 
         #region Moves
-        
-        private static List<(int row, int column)> GetAvailableMoves(Block[][] board, int row, int column)
+
+        public static List<(int row, int column)> GetAvailableMoves(Block[][] board, int position)
+        {
+            (int row, int column) = PositionToCoordinates(position);
+            return GetAvailableMoves(board, row, column);
+        }
+        public static List<(int row, int column)> GetAvailableMoves(Block[][] board, int row, int column)
         {
             List<(int, int)> result = new List<(int, int)>();
             Block block = board[row][column];
@@ -210,7 +234,12 @@ namespace Chess_Server.Modules
         #endregion
 
         #region Move Validations
-        
+
+        public static List<(int row, int column)> GetPossibleMoves(Block[][] board, int fromPosition)
+        {
+            (int fromRow, int fromColumn) = PositionToCoordinates(fromPosition);
+            return GetPossibleMoves(board, fromRow, fromColumn);
+        }
         public static List<(int row, int column)> GetPossibleMoves(Block[][] board, int fromRow, int fromColumn)
         {
             List<(int row, int column)> pseudoMoves = GetAvailableMoves(board, fromRow, fromColumn);
@@ -224,7 +253,13 @@ namespace Chess_Server.Modules
             }
             return legalMoves;
         }
-
+        
+        public static bool IsValidMove(Block[][] board, int fromPosition, int toPosition)
+        {
+            (int fromRow, int fromColumn) = PositionToCoordinates(fromPosition);
+            (int toRow, int toColumn) = PositionToCoordinates(toPosition);
+            return IsValidMove(board, fromRow, fromColumn, toRow, toColumn);
+        }
         public static bool IsValidMove(Block[][] board, int fromRow, int fromColumn, int toRow, int toColumn)
         {
             Block block = board[fromRow][fromColumn];
@@ -235,6 +270,12 @@ namespace Chess_Server.Modules
             return !IsInCheck(block.team, newBoard);
         }
 
+        public static Block[][] SimulateMove(Block[][] board, int fromPosition, int toPosition)
+        {
+            (int fromRow, int fromColumn) = PositionToCoordinates(fromPosition);
+            (int toRow, int toColumn) = PositionToCoordinates(toPosition);
+            return SimulateMove(board, fromRow, fromColumn, toRow, toColumn);
+        }
         private static Block[][] SimulateMove(Block[][] board, int fromRow, int fromColumn, int toRow, int toColumn)
         {
             Block[][] newBoard = CloneBoard(board);
@@ -247,6 +288,11 @@ namespace Chess_Server.Modules
 
         #region Promotion
         
+        public static bool HandlePromotion(Block[][] board, int position)
+        {
+            (int row, int column) = PositionToCoordinates(position);
+            return HandlePromotion(board, row, column);
+        }
         public static bool HandlePromotion(Block[][] board, int row, int column)
         {
             Block block = board[row][column];
