@@ -61,7 +61,7 @@ namespace Chess_Server.Modules
 
 		public static string GetUserName(string uid)
 		{
-			DataTable existData = MySqlManager.Instance.QueryDataTable("SELECT `uid` FROM `chess_users` WHERE `uid` = @USERUID",
+			DataTable existData = MySqlManager.Instance.QueryDataTable("SELECT `displayName` FROM `chess_users` WHERE `uid` = @USERUID",
 			                                                            new Dictionary<string, object>() {
 				                                                            {
 					                                                            "@USERUID", uid
@@ -70,7 +70,7 @@ namespace Chess_Server.Modules
 
 			if (existData.Rows.Count < 0) return "";
 			
-			return existData.Rows[0]["uid"].ToString();
+			return existData.Rows[0]["displayName"].ToString();
 		}
 
 		#region Utils
