@@ -7,7 +7,7 @@ using Chess_Server.Templates.Internal;
 
 namespace Chess_Server.Modules.Handlers
 {
-	public class GameHandler
+	public static class GameHandler
 	{
 		private static readonly string ROOM_UID_PLACEHOLDER = "<ROOM_UID>";
 		private static readonly string BOARD_KEY = ROOM_UID_PLACEHOLDER + "_BoardInfo";

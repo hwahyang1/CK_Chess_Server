@@ -7,7 +7,7 @@ using Chess_Server.Templates.Internal;
 
 namespace Chess_Server.Modules.Handlers
 {
-	public class RoomHandler
+	public static class RoomHandler
 	{
 		public static RoomListsResponse GetRoomLists(RoomListsRequest request, string command = "")
 		{
