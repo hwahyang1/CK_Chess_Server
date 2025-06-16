@@ -129,6 +129,14 @@ namespace Chess_Server
 				{
 					switch (commandMessage?.command.ToLower() ?? "-")
 					{
+						case "Register":
+							UserRegisterRequest userRegisterRequest = JsonSerializer.Deserialize<UserRegisterRequest>(rawMessage, SERIALIZER_OPTIONS);
+							response = JsonSerializer.Serialize<UserRegisterResponse>(UserHandler.Register(userRegisterRequest, client.Client.RemoteEndPoint.ToString()));
+							break;
+						case "Login":
+							UserLoginRequest userLoginRequest = JsonSerializer.Deserialize<UserLoginRequest>(rawMessage, SERIALIZER_OPTIONS);
+							response = JsonSerializer.Serialize<UserLoginResponse>(UserHandler.Login(userLoginRequest, client.Client.RemoteEndPoint.ToString()));
+							break;
 						case "RoomLists":
 							RoomListsRequest roomListsRequest = JsonSerializer.Deserialize<RoomListsRequest>(rawMessage, SERIALIZER_OPTIONS);
 							response = JsonSerializer.Serialize<RoomListsResponse>(RoomHandler.GetRoomLists(roomListsRequest));
