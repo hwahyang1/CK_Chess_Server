@@ -31,7 +31,7 @@ namespace Chess_Server.Modules
 			return (true, existData.Rows[0]["uid"].ToString());
 		}
 
-		public static (bool isSuccess, string userUid) Register(string id, string username, string password, string sourceIpv4)
+		public static (bool isSuccess, string userUid) Register(string id, string userName, string password, string sourceIpv4)
 		{
 			DataTable existData = MySqlManager.Instance.QueryDataTable("SELECT `uid` FROM `chess_users` WHERE `id` = @USERID",
 								                                     new Dictionary<string, object>()
@@ -50,7 +50,7 @@ namespace Chess_Server.Modules
 					                   {
 						                   { "@USERUID", userUid },
 						                   { "@USERID", id },
-						                   { "@DISPLAYNAME", username },
+						                   { "@DISPLAYNAME", userName },
 						                   { "@HASH", hash },
 						                   { "@SALT", salt },
 						                   { "@LASTLOGGEDINIPV4", sourceIpv4 },
@@ -59,7 +59,7 @@ namespace Chess_Server.Modules
 			return (true, userUid);
 		}
 
-		public static string GetUsername(string uid)
+		public static string GetUserName(string uid)
 		{
 			DataTable existData = MySqlManager.Instance.QueryDataTable("SELECT `uid` FROM `chess_users` WHERE `uid` = @USERUID",
 			                                                            new Dictionary<string, object>() {
