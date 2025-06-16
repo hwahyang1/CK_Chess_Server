@@ -116,6 +116,7 @@ namespace Chess_Server
 		private static string HandleMessage(TcpClient client, string rawMessage, string clientUid)
 		{
 			string response;
+			string otherResponse;
 			
 			try
 			{
@@ -135,19 +136,43 @@ namespace Chess_Server
 						case "RoomCreate":
 							RoomCreateRequest roomCreateRequest = JsonSerializer.Deserialize<RoomCreateRequest>(rawMessage, SERIALIZER_OPTIONS);
 							(RoomInfoResponse roomCreateResponse, RoomData[] roomCreateUserPreviousRoom) = RoomHandler.RoomCreate(roomCreateRequest, "RoomJoined");
-							// TODO: Broadcast to previous Room
 							response = JsonSerializer.Serialize<RoomInfoResponse>(roomCreateResponse);
 							break;
 						case "RoomJoin":
 							RoomJoinRequest roomJoinRequest = JsonSerializer.Deserialize<RoomJoinRequest>(rawMessage, SERIALIZER_OPTIONS);
 							(RoomInfoResponse roomJoinResponse, RoomData[] roomJoinUserPreviousRoom) = RoomHandler.RoomJoin(roomJoinRequest, "RoomJoined");
-							// TODO: Broadcast to previous Room
 							response = JsonSerializer.Serialize<RoomInfoResponse>(roomJoinResponse);
+							
+							// Prev
+							RoomLeaveOrDeleteResponse otherRoomLeaveOrDeleteResponse1 = new RoomLeaveOrDeleteResponse("<TARGETUID>", "RoomLeaveOrDelete", 200, "OK", null);
+							foreach (RoomData prevRoom in roomJoinUserPreviousRoom)
+							{
+								otherRoomLeaveOrDeleteResponse1.room = prevRoom;
+								otherResponse = JsonSerializer.Serialize<RoomLeaveOrDeleteResponse>(otherRoomLeaveOrDeleteResponse1);
+								BroadcastToRoom(prevRoom, clientUid, otherResponse);
+							}
+							
+							// Current
+							RoomInfoResponse otherRoomJoinResponse = roomJoinResponse;
+							otherRoomJoinResponse.clientUid = "<TARGETUID>";
+							otherResponse = JsonSerializer.Serialize<RoomInfoResponse>(otherRoomJoinResponse);
+							foreach (RoomData prevRoom in roomJoinUserPreviousRoom)
+							{
+								BroadcastToRoom(prevRoom, clientUid, otherResponse);
+							}
 							break;
 						case "RoomLeaveOrDelete":
 							RoomLeaveOrDeleteRequest roomLeaveOrDeleteRequest = JsonSerializer.Deserialize<RoomLeaveOrDeleteRequest>(rawMessage, SERIALIZER_OPTIONS);
-							response = JsonSerializer.Serialize<RoomLeaveOrDeleteResponse>(RoomHandler.LeaveOrDeleteRoom(roomLeaveOrDeleteRequest, "RoomLeave"));
-							// TODO: Broadcast to Room
+							RoomLeaveOrDeleteResponse roomLeaveOrDeleteResponse = RoomHandler.LeaveOrDeleteRoom(roomLeaveOrDeleteRequest, "RoomLeave");
+							response = JsonSerializer.Serialize<RoomLeaveOrDeleteResponse>(roomLeaveOrDeleteResponse);
+							
+							RoomLeaveOrDeleteResponse otherRoomLeaveOrDeleteResponse2 = roomLeaveOrDeleteResponse;
+							otherRoomLeaveOrDeleteResponse2.clientUid = "<TARGETUID>";
+							otherResponse = JsonSerializer.Serialize<RoomLeaveOrDeleteResponse>(otherRoomLeaveOrDeleteResponse2);
+							if (roomLeaveOrDeleteResponse.room != null)
+							{
+								BroadcastToRoom(roomLeaveOrDeleteResponse.room, clientUid, otherResponse);
+							}
 							break;
 						case "GameReady":
 							// TODO
@@ -163,8 +188,17 @@ namespace Chess_Server
 							break;
 						case "GamePieceMove":
 							GamePieceMoveRequest gamePieceMoveRequest = JsonSerializer.Deserialize<GamePieceMoveRequest>(rawMessage, SERIALIZER_OPTIONS);
-							response = JsonSerializer.Serialize<GamePieceMoveResponse>(GameHandler.GamePieceMove(gamePieceMoveRequest));
-							// TODO: Broadcast to Room
+							GamePieceMoveResponse gamePieceMoveResponse = GameHandler.GamePieceMove(gamePieceMoveRequest);
+							response = JsonSerializer.Serialize<GamePieceMoveResponse>(gamePieceMoveResponse);
+							
+							RoomData? moveRoom = RoomManager.GetRoomByRoomId(gamePieceMoveRequest.roomId);
+							GamePieceMoveResponse otherGamePieceMoveResponse = gamePieceMoveResponse;
+							otherGamePieceMoveResponse.clientUid = "<TARGETUID>";
+							otherResponse = JsonSerializer.Serialize<GamePieceMoveResponse>(otherGamePieceMoveResponse);
+							if (moveRoom != null)
+							{
+								BroadcastToRoom(moveRoom, clientUid, otherResponse);
+							}
 							break;
 						default:
 							response = JsonSerializer.Serialize<ErrorResponse>(new ErrorResponse(clientUid, 404, "Not Found"));
@@ -182,6 +216,23 @@ namespace Chess_Server
 		}
 
 		#region Utils
+
+		private static void BroadcastToRoom(RoomData? room, string excludeUid, string data)
+		{
+			if (room == null) return;
+			
+			List<string> targetUids = new List<string>(room.participants)
+			{
+				room.ownerId
+			};
+
+			foreach (string uid in targetUids)
+			{
+				if (uid == excludeUid) continue;
+				string newData = data.Replace("<TARGETUID>", uid);
+				ThreadPool.QueueUserWorkItem(_ => SendData(uid, newData));
+			}
+		}
 
 		/// <summary>
 		/// 특정 클라이언트에 데이터를 전송합니다.
