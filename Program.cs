@@ -137,6 +137,10 @@ namespace Chess_Server
 							UserLoginRequest userLoginRequest = JsonSerializer.Deserialize<UserLoginRequest>(rawMessage, SERIALIZER_OPTIONS);
 							response = JsonSerializer.Serialize<UserLoginResponse>(UserHandler.Login(userLoginRequest, client.Client.RemoteEndPoint.ToString()));
 							break;
+						case "UserName":
+							UserNameRequest userNameRequest = JsonSerializer.Deserialize<UserNameRequest>(rawMessage, SERIALIZER_OPTIONS);
+							response = JsonSerializer.Serialize<UserNameResponse>(UserHandler.GetUserName(userNameRequest));
+							break;
 						case "RoomLists":
 							RoomListsRequest roomListsRequest = JsonSerializer.Deserialize<RoomListsRequest>(rawMessage, SERIALIZER_OPTIONS);
 							response = JsonSerializer.Serialize<RoomListsResponse>(RoomHandler.GetRoomLists(roomListsRequest));

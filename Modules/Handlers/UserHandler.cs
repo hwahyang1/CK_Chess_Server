@@ -30,5 +30,16 @@ namespace Chess_Server.Modules.Handlers
 			
 			return new UserRegisterResponse(request.clientUid, command, 200, "OK", userUid, displayName);
 		}
+
+		public static UserNameResponse GetUserName(UserNameRequest request, string command = "")
+		{
+			if (command == "") command = request.command;
+
+			string userName = UserManager.GetUserName(request.uid);
+			
+			if (userName == "") return new UserNameResponse(request.clientUid, command, 404, "Not Found", "");
+			
+			return new UserNameResponse(request.clientUid, command, 200, "OK", userName);
+		}
 	}
 }
