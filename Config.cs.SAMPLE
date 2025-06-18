@@ -6,6 +6,8 @@ namespace Chess_Server
 	{
 		public static readonly int BUFFER_SIZE = 4096;
         public static readonly int SERVER_PORT = 14653;
+
+        public static readonly int SALT_LENGTH = 2;
         
         public static readonly string MYSQL_IP = "localhost";
 		public static readonly string MYSQL_ID = "ID";
