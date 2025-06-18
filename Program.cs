@@ -105,6 +105,8 @@ namespace Chess_Server
 				// TODO: clientUid to userUid
 				RoomData? room = RoomManager.GetRoomByPlayerId(clientUid);
 				if (room != null) RoomManager.LeaveRoom(room.id, clientUid);
+
+				UserHandler.Logout(clientUid);
 				
 				stream.Close();
 				client.Close();
@@ -131,11 +133,11 @@ namespace Chess_Server
 					{
 						case "Register":
 							UserRegisterRequest userRegisterRequest = JsonSerializer.Deserialize<UserRegisterRequest>(rawMessage, SERIALIZER_OPTIONS);
-							response = JsonSerializer.Serialize<UserRegisterResponse>(UserHandler.Register(userRegisterRequest, client.Client.RemoteEndPoint.ToString()));
+							response = JsonSerializer.Serialize<UserRegisterResponse>(UserHandler.Register(userRegisterRequest, clientUid, client.Client.RemoteEndPoint.ToString()));
 							break;
 						case "Login":
 							UserLoginRequest userLoginRequest = JsonSerializer.Deserialize<UserLoginRequest>(rawMessage, SERIALIZER_OPTIONS);
-							response = JsonSerializer.Serialize<UserLoginResponse>(UserHandler.Login(userLoginRequest, client.Client.RemoteEndPoint.ToString()));
+							response = JsonSerializer.Serialize<UserLoginResponse>(UserHandler.Login(userLoginRequest, clientUid, client.Client.RemoteEndPoint.ToString()));
 							break;
 						case "UserName":
 							UserNameRequest userNameRequest = JsonSerializer.Deserialize<UserNameRequest>(rawMessage, SERIALIZER_OPTIONS);
