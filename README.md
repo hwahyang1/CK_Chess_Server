@@ -6,7 +6,7 @@
 ### 개요
 청강문화산업대학교 2학년 1학기 게임네트워크프로그래밍 기말과제 (간단한 네트워크 게임 개발하기)
 
-멀티플레이 체스 게임
+멀티플레이 체스 게임 - 게임 서버
 ### 링크
 - Server: [hwahyang1/CK_Chess_Server](https://github.com/hwahyang1/CK_Chess_Server)
 - Client: [hwahyang1/CK_Chess_Client](https://github.com/hwahyang1/CK_Chess_Client)
