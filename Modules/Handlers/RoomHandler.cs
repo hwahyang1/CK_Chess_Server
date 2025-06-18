@@ -20,7 +20,9 @@ namespace Chess_Server.Modules.Handlers
 		public static (RoomInfoResponse response, RoomData[] previousRoom) RoomCreate(RoomCreateRequest request, string command = "")
 		{
 			if (command == "") command = request.command;
-			(string roomId, RoomData[] previousRoom) = RoomManager.CreateRoom(request.roomName, request.clientUid);
+			string? userUid = UserHandler.GetUserUidByClientUid(request.clientUid);
+			if (userUid == null) return (new RoomInfoResponse(request.clientUid, command, 403, "Forbidden", null, DefineTeam.None), []);
+			(string roomId, RoomData[] previousRoom) = RoomManager.CreateRoom(request.roomName, userUid);
 			RoomData room = RoomManager.GetRoomByRoomId(roomId);
 			RoomInfoResponse response = new RoomInfoResponse(request.clientUid, command, 200, "OK", room, DefineTeam.None);
 			return (response, previousRoom);
@@ -29,7 +31,9 @@ namespace Chess_Server.Modules.Handlers
 		public static (RoomInfoResponse response, RoomData[] previousRoom) RoomJoin(RoomJoinRequest request, string command = "")
 		{
 			if (command == "") command = request.command;
-			RoomData[] previousRoom = RoomManager.JoinRoom(request.roomId, request.clientUid); // TODO: clientUid to userUid
+			string? userUid = UserHandler.GetUserUidByClientUid(request.clientUid);
+			if (userUid == null) return (new RoomInfoResponse(request.clientUid, command, 403, "Forbidden", null, DefineTeam.None), []);
+			RoomData[] previousRoom = RoomManager.JoinRoom(request.roomId, userUid);
 			// TODO: Game Start
 			RoomData room = RoomManager.GetRoomByRoomId(request.roomId);
 			RoomInfoResponse response = new RoomInfoResponse(request.clientUid, command, 200, "OK", room, DefineTeam.None);
@@ -39,7 +43,9 @@ namespace Chess_Server.Modules.Handlers
 		public static RoomLeaveOrDeleteResponse LeaveOrDeleteRoom(RoomLeaveOrDeleteRequest request, string command = "")
 		{
 			if (command == "") command = request.command;
-			RoomData? room = RoomManager.LeaveRoom(request.roomId, request.clientUid); // TODO: clientUid to userUid
+			string? userUid = UserHandler.GetUserUidByClientUid(request.clientUid);
+			if (userUid == null) return new RoomLeaveOrDeleteResponse(request.clientUid, command, 403, "Forbidden", null);
+			RoomData? room = RoomManager.LeaveRoom(request.roomId, userUid);
 			RoomLeaveOrDeleteResponse roomLeaveOrDeleteResponse = new RoomLeaveOrDeleteResponse(request.clientUid, command, 200, "OK", room);
 			return roomLeaveOrDeleteResponse;
 		}

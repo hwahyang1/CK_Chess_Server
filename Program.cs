@@ -102,9 +102,12 @@ namespace Chess_Server
 			{
 				Console.WriteLine("[{0}] Client connection lost.", client.Client.RemoteEndPoint);
 				
-				// TODO: clientUid to userUid
-				RoomData? room = RoomManager.GetRoomByPlayerId(clientUid);
-				if (room != null) RoomManager.LeaveRoom(room.id, clientUid);
+				string? userUid = UserHandler.GetUserUidByClientUid(clientUid);
+				if (userUid != null)
+				{
+					RoomData? room = RoomManager.GetRoomByPlayerId(clientUid);
+					if (room != null) RoomManager.LeaveRoom(room.id, clientUid);
+				}
 
 				UserHandler.Logout(clientUid);
 				

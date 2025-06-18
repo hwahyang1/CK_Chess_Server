@@ -86,5 +86,17 @@ namespace Chess_Server.Modules.Handlers
 			
 			return new UserNameResponse(request.clientUid, command, 200, "OK", userName);
 		}
+
+		public static string? GetUserUidByClientUid(string clientUid)
+		{
+			string userKey = USER_KEY.Replace(CLIENT_UID_PLACEHOLDER, clientUid);
+			return RedisManager.Instance.Get(userKey);
+		}
+
+		public static string? GetClientUidByUserUid(string userUid)
+		{
+			string clientKey = CLIENT_KEY.Replace(USER_UID_PLACEHOLDER, userUid);
+			return RedisManager.Instance.Get(clientKey);
+		}
 	}
 }
