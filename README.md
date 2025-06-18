@@ -14,7 +14,7 @@
 - C# (.NET 8)
 - MySql.Data
 - StackExchange.Redis
-### 1. 프로젝트 요구사항
+## 1. 프로젝트 요구사항
 1. Install MySQL, Redis
 2. rename `Config.cs.SAMPLE` to `Config.cs`
 3. edit `Config.cs`
