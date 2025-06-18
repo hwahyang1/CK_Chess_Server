@@ -7,11 +7,11 @@ namespace Chess_Server.Modules.Handlers
 {
 	public static class UserHandler
 	{
-		public static readonly string CLIENT_UID_PLACEHOLDER = "<CLIENT_UID>";
-		public static readonly string USER_KEY = CLIENT_UID_PLACEHOLDER + "_UserUid";
+		private static readonly string CLIENT_UID_PLACEHOLDER = "<CLIENT_UID>";
+		private static readonly string USER_KEY = CLIENT_UID_PLACEHOLDER + "_UserUid";
 		
-		public static readonly string USER_UID_PLACEHOLDER = "<USER_UID>";
-		public static readonly string CLIENT_KEY = USER_UID_PLACEHOLDER + "_ClientUid";
+		private static readonly string USER_UID_PLACEHOLDER = "<USER_UID>";
+		private static readonly string CLIENT_KEY = USER_UID_PLACEHOLDER + "_ClientUid";
 		
 		public static UserLoginResponse Login(UserLoginRequest request, string clientUid, string sourceIpv4, string command = "")
 		{

@@ -20,7 +20,7 @@ namespace Chess_Server.Modules.Handlers
 		public static (RoomInfoResponse response, RoomData[] previousRoom) RoomCreate(RoomCreateRequest request, string command = "")
 		{
 			if (command == "") command = request.command;
-			(string roomId, RoomData[] previousRoom) = RoomManager.CreateRoom(request.clientUid, request.roomName);
+			(string roomId, RoomData[] previousRoom) = RoomManager.CreateRoom(request.roomName, request.clientUid);
 			RoomData room = RoomManager.GetRoomByRoomId(roomId);
 			RoomInfoResponse response = new RoomInfoResponse(request.clientUid, command, 200, "OK", room, DefineTeam.None);
 			return (response, previousRoom);
