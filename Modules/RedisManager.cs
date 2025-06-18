@@ -38,6 +38,12 @@ namespace Chess_Server.Modules
 			return value;
 		}
 
+		public string? Delete(string key)
+		{
+			string? value = GetDatabase()?.StringGetDelete(key);
+			return value;
+		}
+ 
 		public void Set(string key, string value)
 		{
 			GetDatabase()?.StringSet(key, value);
