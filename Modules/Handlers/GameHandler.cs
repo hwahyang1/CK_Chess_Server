@@ -47,6 +47,8 @@ namespace Chess_Server.Modules.Handlers
 			if (command == "") command = request.command;
 			RoomData? room = RoomManager.GetRoomByRoomId(request.roomId);
 			if (room == null) return new GameBoardInfoResponse(request.clientUid, command, 404, "Not Found", []);
+			string? userUid = UserHandler.GetUserUidByClientUid(request.clientUid);
+			if (userUid == null || (room.ownerId != userUid && !room.participants.Contains(userUid))) return new GameBoardInfoResponse(request.clientUid, command, 403, "Forbidden", []);
 			
 			Block[] board = ChessManager.BoardToArray(GetBoard(request.roomId));
 
@@ -59,6 +61,8 @@ namespace Chess_Server.Modules.Handlers
 			if (command == "") command = request.command;
 			RoomData? room = RoomManager.GetRoomByRoomId(request.roomId);
 			if (room == null) return new GamePieceAvailableMovementsResponse(request.clientUid, command, 404, "Not Found", []);
+			string? userUid = UserHandler.GetUserUidByClientUid(request.clientUid);
+			if (userUid == null || (room.ownerId != userUid && !room.participants.Contains(userUid))) return new GamePieceAvailableMovementsResponse(request.clientUid, command, 403, "Forbidden", []);
 			
 			Block[][] board = GetBoard(request.roomId);
 
@@ -73,6 +77,8 @@ namespace Chess_Server.Modules.Handlers
 			if (command == "") command = request.command;
 			RoomData? room = RoomManager.GetRoomByRoomId(request.roomId);
 			if (room == null) return new GamePieceMoveResponse(request.clientUid, command, 404, "Not Found", DefineGameStatus.Unknown, DefineTeam.None, []);
+			string? userUid = UserHandler.GetUserUidByClientUid(request.clientUid);
+			if (userUid == null || (room.ownerId != userUid && !room.participants.Contains(userUid))) return new GamePieceMoveResponse(request.clientUid, command, 403, "Forbidden", DefineGameStatus.Unknown, DefineTeam.None, []);
 			
 			Block[][] board = GetBoard(request.roomId);
 
